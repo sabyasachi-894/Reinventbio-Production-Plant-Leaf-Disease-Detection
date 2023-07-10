@@ -2,6 +2,7 @@ package com.sabyasachi.imageappkotlin
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Environment
@@ -39,6 +40,17 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        val btnGallery=findViewById<Button>(R.id.btnGallery)
+
+        btnGallery.setOnClickListener{
+            var intent = Intent()
+            intent.setAction(Intent.ACTION_GET_CONTENT)
+            intent.setType("image/*")
+            startActivityForResult(intent,100)
+        }
+
+
+
 
         //switching from imageView to textView
         val btnUploadPicture=findViewById<Button>(R.id.btnUploadPicture)
@@ -50,6 +62,9 @@ class MainActivity : AppCompatActivity() {
             tvContent.setVisibility(View.VISIBLE) // Show the TextView
         }
     }
+
+
+
 
     private fun getPhotoFile(fileName: String): File {
         val storageFile=getExternalFilesDir(Environment.DIRECTORY_PICTURES)
@@ -67,7 +82,19 @@ class MainActivity : AppCompatActivity() {
             imageView.setImageBitmap(takenImage)
             imageView.setVisibility(View.VISIBLE)
             tvContent.visibility = View.GONE
-        }else{
+        }
+        else if(requestCode==100)
+        {
+            lateinit var bitmap: Bitmap
+            val imageView = findViewById<ImageView>(R.id.imageView)
+            var uri=data?.data
+            bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver,uri)
+            imageView.setImageBitmap(bitmap)
+        }
+
+
+
+        else{
             super.onActivityResult(requestCode, resultCode, data)
         }
     }
